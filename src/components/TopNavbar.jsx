@@ -4,10 +4,10 @@ function TopNavbar() {
     const navigate = useNavigate()
 
     return (
-        <div className="navbar bg-base-100 shadow-md">
+        <div className="navbar bg-base-100 shadow-md bg-white">
             <div className="navbar-start"></div>
                 <div 
-                    className="navbar-center prose" 
+                    className="navbar-center prose cursor-pointer" 
                     onClick={()=>navigate('/')}
                 >
                     <h1>

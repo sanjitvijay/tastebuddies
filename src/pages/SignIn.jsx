@@ -1,9 +1,12 @@
 import { useState } from "react"
 import {Link, useNavigate} from 'react-router-dom'
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { MdOutlineVisibility } from "react-icons/md";
 import { MdOutlineVisibilityOff } from "react-icons/md";
 import { CiLock } from "react-icons/ci";
 import { HiOutlineMail } from "react-icons/hi";
+import { toast } from "react-toastify";
+import OAuth from "../components/OAuth";
 function SignIn() {
     const [showPassword, setShowPassword] = useState(false)
     const [formData, setFormData] = useState({
@@ -21,13 +24,31 @@ function SignIn() {
             [e.target.id]: e.target.value,
         }))
     }
+
+    const onSubmit = async (e) => {
+        e.preventDefault()
+
+        try{
+            const auth = getAuth()
+            const userCredential = await signInWithEmailAndPassword(auth, email, password)
+
+            if(userCredential.user){
+                navigate('/')
+            }
+        }catch(error){
+            toast.error("Invalid Credentials")
+        }   
+
+        toast.success("Logged in!")
+    }
     return (
         <div>
             <div className="prose">
                 <h1>Welcome Back!</h1>
             </div>
 
-            <form>
+            <form
+                onSubmit={onSubmit}>
                  <div className="relative mt-4 mb-4"> 
                     <input 
                         type="text" 
@@ -72,19 +93,26 @@ function SignIn() {
                         </button>
                     </div> 
                 </div> 
-            </form>
 
-            <div className="pr-4 pt-4 pb-10">
-                <Link to="/forgot-password" className="text-right">
-                        <p className="text-secondary">Forgot Password?</p>
-                </Link>
-            </div>      
+                <div className="pr-4 pt-4 pb-10">
+                    <Link to="/forgot-password" className="text-right">
+                            <p className="text-secondary">Forgot Password?</p>
+                    </Link>
+                </div>   
 
-            <button className="btn btn-secondary prose">
+                <button 
+                    type='submit'
+                    className="btn btn-secondary prose">
                     <h2 className="text-base-100">Sign In</h2>
-            </button>  
-                
-            <div className="flex justify-center items-center mt-10">
+                </button> 
+            </form>
+                                
+            <div className="flex justify-center items-center mt-5">
+                <OAuth/>
+            </div>
+            
+
+            <div className="flex justify-center items-center mt-2">
                 <button 
                     className="btn btn-ghost prose"
                     onClick={()=>navigate('/sign-up')}>
