@@ -18,7 +18,7 @@ function App() {
     <ToastContainer/>
     <Router>
       <TopNavbar/>
-      <main className="mx-4 mt-4">
+      <div className="mx-4 mt-20">
         <Routes>
           <Route path='/' element={<Home/>}/>
           <Route path='/review' element={<Review/>}/>
@@ -29,7 +29,7 @@ function App() {
           <Route path='/sign-up' element={<SignUp/>}/>
           <Route path='/forgot-password' element={<ForgotPassword/>}/>
         </Routes>
-      </main>
+      </div>
       <BottomNavbar/>
     </Router>
     </>
