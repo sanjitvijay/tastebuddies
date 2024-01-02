@@ -21,7 +21,9 @@ function App() {
       <div className="mx-4 mt-20">
         <Routes>
           <Route path='/' element={<Home/>}/>
-          <Route path='/review' element={<Review/>}/>
+          <Route path='/review' element={<PrivateRoute/>}>
+            <Route path='/review' element={<Review/>}/>
+          </Route>
           <Route path='/profile' element={<PrivateRoute/>}>
             <Route path='/profile' element={<Profile/>}/>
           </Route>
