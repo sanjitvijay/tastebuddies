@@ -1,14 +1,11 @@
 import ReactStars from "react-rating-stars-component";
-import { useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase.config";
 import { useEffect, useState } from "react";
-import Spinner from "./Spinner";
+
 
 function ReviewItem({review}) {
-    const navigate = useNavigate()
-    const {description, hasPrice, hasImage, imageUrl, name, placeName, price, rating, userRef} = review
-    const [loading, setLoading] = useState(true)
+    const { hasPrice, hasImage, imageUrl, name, placeName, price, rating, userRef} = review
     const [username, setUsername] = useState('')
 
     useEffect(()=>{
@@ -17,16 +14,12 @@ function ReviewItem({review}) {
             const docSnap = await getDoc(docRef)
             if(docSnap.exists()){
                 setUsername(docSnap.data().name)
-                setLoading(false)
             }
         }
 
         fetchUsername()
     }, [userRef])
     
-    if(loading){
-        return <Spinner/>
-    }
 
     return (
         <div className={`card card-compact bg-white shadow-xl hover:card-bordered ${hasImage ? 'row-span-2' : 'row-span-1'}`}>
