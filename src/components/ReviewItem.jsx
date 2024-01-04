@@ -1,10 +1,33 @@
 import ReactStars from "react-rating-stars-component";
-import { render } from "react-dom";
 import { useNavigate } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase.config";
+import { useEffect, useState } from "react";
+import Spinner from "./Spinner";
+
 function ReviewItem({review}) {
     const navigate = useNavigate()
-    const {description, hasPrice, hasImage, imageUrls, name, place, price, rating, username} = review
+    const {description, hasPrice, hasImage, imageUrl, name, placeName, price, rating, userRef} = review
+    const [loading, setLoading] = useState(true)
+    const [username, setUsername] = useState('')
+
+    useEffect(()=>{
+        const fetchUsername = async () => {
+            const docRef = doc(db, 'users', userRef)
+            const docSnap = await getDoc(docRef)
+            if(docSnap.exists()){
+                setUsername(docSnap.data().name)
+                setLoading(false)
+            }
+        }
+
+        fetchUsername()
+    }, [userRef])
     
+    if(loading){
+        return <Spinner/>
+    }
+
     return (
         <div className={`card card-compact bg-white shadow-xl hover:card-bordered ${hasImage ? 'row-span-2' : 'row-span-1'}`}>
             <div className="card-body">
@@ -16,7 +39,7 @@ function ReviewItem({review}) {
                         alt="Listing 1"
                         className="object-cover w-full"
                         height="100"
-                        src={imageUrls[0]}
+                        src={imageUrl}
                         style={{
                         aspectRatio: "100/100",
                         objectFit: "cover",
@@ -35,7 +58,7 @@ function ReviewItem({review}) {
                         )}
 
                     </div>
-                    <h3 className="mt-1 pb-0">{place.name}</h3>
+                    <h3 className="mt-1 pb-0">{placeName}</h3>
                 </header>
                 <ReactStars
                     edit={false}

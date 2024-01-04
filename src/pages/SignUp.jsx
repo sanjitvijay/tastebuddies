@@ -66,7 +66,7 @@ function SignUp() {
                     <input 
                         type="text" 
                         className="input-border input-lg bg-white w-full pl-12 pr-4 py-3 rounded-full" 
-                        placeholder="Enter your name" 
+                        placeholder="Enter your username" 
                         id='name'
                         value={name}
                         onChange={onChange}
