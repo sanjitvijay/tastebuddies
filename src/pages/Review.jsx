@@ -210,7 +210,7 @@ function Review() {
                     <h3>Name</h3>
                 </label>
                 <input 
-                    className="input input-secondary bg-white w-96"
+                    className="input input-secondary bg-white w-full"
                     type="text"
                     id='name'
                     value={name}
@@ -224,7 +224,7 @@ function Review() {
                     <h3>Description</h3>
                 </label>
                 <textarea 
-                    className="textarea textarea-secondary bg-white w-96"
+                    className="textarea textarea-secondary bg-white w-full"
                     type="text"
                     id='description'
                     value={description}
@@ -279,7 +279,7 @@ function Review() {
                 </label>
                 <input 
                     type='text'
-                    className="input input-secondary bg-white w-96"
+                    className="input input-secondary bg-white w-full"
                     id="placeName"
                     value={placeName}
                     onChange={onMutate}
@@ -316,14 +316,14 @@ function Review() {
 
                 <input 
                     type="file" 
-                    className="file-input file-input-secondary w-96" 
+                    className="file-input file-input-secondary w-full" 
                     id='images'
                     onChange={onMutate}
                     accept='.jpg,.png,.jpeg'
                 />
                 
                 <div 
-                    className="flex justify-center mt-5 px-32"
+                    className="flex justify-center mt-5 px-5"
                     onClick={onSubmit}>
                     <button className="btn btn-primary text-white w-full">
                         Create Review!
