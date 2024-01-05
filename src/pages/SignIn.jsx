@@ -42,7 +42,7 @@ function SignIn() {
         toast.success("Logged in!")
     }
     return (
-        <div>
+        <div className="mb-24">
             <div className="prose">
                 <h1>Welcome Back!</h1>
             </div>

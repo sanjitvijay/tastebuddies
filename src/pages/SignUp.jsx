@@ -54,7 +54,7 @@ function SignUp() {
         toast.success("Account created successfully")
     }
     return (
-        <div>
+        <div className="mb-24">
             <div className="prose">
                 <h1>Create an Account</h1>
             </div>
