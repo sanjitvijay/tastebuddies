@@ -180,15 +180,13 @@ function Review() {
 
        try{
             await addDoc(collection(db, 'reviews'), formDataCopy)
+            setLoading(false)
+            toast.success("Review successfully posted!")
+            navigate('/')
        }catch(error){
             setLoading(false)
             toast.error("Unable to post review")
        }
-
-
-        setLoading(false)
-        toast.success("Review successfully posted!")
-        navigate('/')
     }
 
     if(loading){
@@ -319,7 +317,7 @@ function Review() {
                     className="file-input file-input-secondary w-full bg-white" 
                     id='images'
                     onChange={onMutate}
-                    accept='.jpg,.png,.jpeg'
+                    accept='.jpg,.png,.jpeg, .heic'
                 />
                 
                 <div 
