@@ -1,9 +1,13 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { getAuth, updateProfile } from "firebase/auth"
-import { updateDoc, doc } from "firebase/firestore"
+import { updateDoc, doc, collection, query, getDocs, orderBy, where, deleteDoc } from "firebase/firestore"
 import { db } from "../firebase.config"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
+import ReviewGrid from "../components/ReviewGrid"
+import Spinner from "../components/Spinner"
+ 
+
 function Profile() {
     const auth = getAuth()
     const navigate = useNavigate()
@@ -15,6 +19,36 @@ function Profile() {
     })
 
     const {name, email} = formData
+
+    const [loading, setLoading] = useState(true)
+    const [reviews, setReviews] = useState([])
+
+    useEffect(()=> {
+        const fetchReviews = async () => {
+            try{
+                const reviewsRef = collection(db, "reviews")
+                const q = query(reviewsRef, where("userRef", '==', auth.currentUser.uid), orderBy("timestamp", "desc"))
+                const querySnap = await getDocs(q)
+
+                const reviews = []
+
+                querySnap.forEach((doc)=>{
+                    return reviews.push({
+                        id: doc.id, 
+                        data: doc.data()
+                    })
+                })
+
+                setReviews(reviews)
+                setLoading(false)
+            }catch(error){
+                //toast.error("Could not fetch reviews")
+                console.log(error)
+            }
+        }
+
+        fetchReviews()
+    }, [auth.currentUser.uid])
 
     const onLogout = () => {
         auth.signOut()
@@ -43,6 +77,25 @@ function Profile() {
             ...prevState, 
             [e.target.id]: e.target.value
         }))
+    }
+
+    const onDelete = async (reviewId) => {
+        if(window.confirm("Are you sure you want to delete?")){
+            try{
+                await deleteDoc(doc(db, 'reviews', reviewId))
+                const updatedReviews = reviews.filter(
+                    (review) => review.id !== reviewId
+                )
+                setReviews(updatedReviews)
+                toast.success('Successfully deleted listing')
+            }catch(error){
+                toast.error("Could not delete review")    
+            }
+        }
+    }
+
+    if(loading){
+        return <Spinner/>
     }
 
     return (
@@ -94,6 +147,16 @@ function Profile() {
                     />
                 </form>
             </div>
+            
+            {reviews.length !== 0 && (
+                <>
+                    <div className="prose mt-5 mb-5">
+                        <h2>My Reviews</h2>
+                    </div>
+
+                    <ReviewGrid reviews={reviews} onDelete={onDelete}/>     
+                </>
+            )}
         </>
 
     )

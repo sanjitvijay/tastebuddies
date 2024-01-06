@@ -4,7 +4,19 @@ module.exports = {
     "./src/**/*.{js,jsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        "primary": "#FB3640",
+                  
+        "secondary": "#0A2463",
+                  
+        "accent": "#247BA0",
+                  
+        "neutral": "#000000",
+                  
+        "base-100": "#E2E2E2",
+      }
+    },
   },
   plugins: [require("daisyui"), require('@tailwindcss/typography')],
   daisyui: {

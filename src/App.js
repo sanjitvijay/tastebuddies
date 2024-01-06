@@ -10,6 +10,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
 import PrivateRoute from "./components/PrivateRoute";
+import EditReview from "./pages/EditReview";
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
           <Route path='/sign-in' element={<SignIn/>}/>
           <Route path='/sign-up' element={<SignUp/>}/>
           <Route path='/forgot-password' element={<ForgotPassword/>}/>
+          <Route path='/edit-review/:reviewId' element={<EditReview/>}/>
         </Routes>
       </div>
       <BottomNavbar/>

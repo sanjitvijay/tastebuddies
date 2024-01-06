@@ -2,14 +2,14 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {getStorage, ref, uploadBytesResumable, getDownloadURL} from 'firebase/storage'
 import { useEffect, useState, useRef } from "react";
 import ReactStars from "react-rating-stars-component";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import {v4 as uuidv4} from 'uuid'
 import {toast} from 'react-toastify'
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { serverTimestamp, doc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase.config";
 
-function Review() {
+function EditReview() {
     const [formData, setFormData] = useState({
         description: '',
         name: '',
@@ -20,6 +20,7 @@ function Review() {
         image: null
     })
     const [loading, setLoading] = useState(false)
+    const [review, setReview]= useState(false)
     
     const {
         name,
@@ -33,7 +34,35 @@ function Review() {
 
     const auth = getAuth()
     const navigate = useNavigate()
+    const params = useParams()
     const isMounted = useRef(true)
+
+    useEffect(() => {
+        if (review && review.userRef !== auth.currentUser.uid) {
+          toast.error('You can not edit that listing')
+          navigate('/')
+        }
+    })
+
+    useEffect(()=>{
+        setLoading(true)
+        const fetchListing = async () => {
+            const docRef = doc(db, "reviews", params.reviewId)
+            const docSnap = await getDoc(docRef)
+            
+            if(docSnap.exists()){
+                setReview(docSnap.data())
+                setFormData((prevState) => ({...prevState, ...docSnap.data()}))
+                console.log(formData)
+                setLoading(false)
+            }else {
+                navigate('/')
+                toast.error("Review does not exist")
+            }
+        }
+
+        fetchListing()
+    },[params.reviewId, navigate])
 
     useEffect(() => {
         if (isMounted) {
@@ -156,7 +185,7 @@ function Review() {
         const hasImage = image === null ? false : true
         const hasPrice = placeType === 'restaurant' ? true : false 
 
-        let imageUrl
+        let imageUrl = review.hasImage && review.imageUrl
 
         if(hasImage){
             imageUrl = await storeImage(image).catch(()=>{
@@ -179,16 +208,18 @@ function Review() {
         hasPrice === false && delete formDataCopy.price
 
        try{
-            await addDoc(collection(db, 'reviews'), formDataCopy)
+            const docRef = doc(db, "reviews", params.reviewId)
+            await updateDoc(docRef, formDataCopy)
+            setLoading(false)
+            toast.success("Review successfully updated!")
+            navigate('/')
+
        }catch(error){
             setLoading(false)
-            toast.error("Unable to post review")
+            console.log(error)
+            console.log(formDataCopy)
+            toast.error("Unable to update review")
        }
-
-
-        setLoading(false)
-        toast.success("Review successfully posted!")
-        navigate('/')
     }
 
     if(loading){
@@ -200,7 +231,7 @@ function Review() {
     return (
         <div className="flex flex-col h-screen">
             <div className="prose">
-                <h1>Write a Review</h1>
+                <h1>Edit Review</h1>
             </div>
             <form 
                 className="form-control pb-24"
@@ -326,7 +357,7 @@ function Review() {
                     className="flex justify-center mt-5 px-5"
                     onClick={onSubmit}>
                     <button className="btn btn-primary text-white w-full">
-                        Create Review!
+                        Edit Review
                     </button>
                 </div>
             </form>
@@ -335,4 +366,4 @@ function Review() {
     )
 }
 
-export default Review
+export default EditReview
