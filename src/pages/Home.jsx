@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import {useLocation} from "react-router-dom"
+import { useLocation } from "react-router-dom"
 import { collection, query, getDocs, orderBy } from "firebase/firestore"
 import { db } from "../firebase.config"
 import {toast} from "react-toastify"
@@ -12,10 +12,7 @@ function Home() {
     const [reviews, setReviews] = useState([])
 
     //form states
-    const [place, setPlace] = useState('')
     const [item, setItem]= useState('')
-
-    const location = useLocation()
 
     const algoliasearch = require('algoliasearch')
 
@@ -28,65 +25,60 @@ function Home() {
     
 
     useEffect(()=>{
-        const fetchReviews = async () => {
-            const path = location.pathname
-            const response = await index.search(item)
-            const reviews = []
-            response.hits.forEach((hit)=>{
-                console.log(hit)
-                return reviews.push({
-                    data: hit,
-                    id: hit.objectID
-                })
-            })
-
-            setReviews(reviews)
-        }
-
-        fetchReviews()
-        setLoading(false)
-    },[item, location.pathname])
-
-
-    // useEffect(()=> {
-    //     const fetchReviews = async () => {
-    //         try{
-    //             const reviewsRef = collection(db, "reviews")
-    //             const q = query(reviewsRef, orderBy("timestamp", "desc"))
-    //             const querySnap = await getDocs(q)
-
-    //             console.log(querySnap)
-
-    //             const reviews = []
-
-    //             querySnap.forEach((doc)=>{
-    //                 return reviews.push({
-    //                     id: doc.id, 
-    //                     data: doc.data()
-    //                 })
-    //             })
-
-    //             setReviews(reviews)
-    //             setLoading(false)
-    //         }catch(error){
-    //             toast.error("Could not fetch reviews")
-    //         }
-    //     }
-
-    //     fetchReviews()
-    // }, [])
-
-    const onChange = e => {
-        if(e.target.id === 'place'){
-            setPlace(e.target.value)
+        if(item === ''){
+            fetchReviewsWithFirestore()
         }
         else{
-            setItem(e.target.value)
+            fetchReviewsWithAlgolia()
         }
+        //eslint-disable-next-line
+    },[item])
+
+    const fetchReviewsWithAlgolia = async () => {
+        const response = await index.search(item)
+        const r = []
+        response.hits.forEach((hit)=>{
+            return r.push({
+                data: hit,
+                id: hit.objectID
+            })
+        })
+
+        setReviews(r)
+        setLoading(false)
+    }
+
+
+
+        const fetchReviewsWithFirestore = async () => {
+            try{
+                const reviewsRef = collection(db, "reviews")
+                const q = query(reviewsRef, orderBy("timestamp", "desc"))
+                const querySnap = await getDocs(q)
+
+                console.log(querySnap)
+
+                const reviews = []
+
+                querySnap.forEach((doc)=>{
+                    return reviews.push({
+                        id: doc.id, 
+                        data: doc.data()
+                    })
+                })
+
+                setReviews(reviews)
+                setLoading(false)
+            }catch(error){
+                toast.error("Could not fetch reviews")
+            }
+        }
+
+    const onChange =  e => {
+        setItem(e.target.value)
     }
 
     const onClear = () => {
-        setPlace('')
         setItem('')
     }
 

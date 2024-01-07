@@ -1,10 +1,8 @@
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import {getStorage, ref, uploadBytesResumable, getDownloadURL} from 'firebase/storage'
 import { useEffect, useState, useRef } from "react";
 import ReactStars from "react-rating-stars-component";
 import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "../components/Spinner";
-import {v4 as uuidv4} from 'uuid'
 import {toast} from 'react-toastify'
 import { serverTimestamp, doc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase.config";
@@ -51,7 +49,6 @@ function EditReview() {
             if(docSnap.exists()){
                 setReview(docSnap.data())
                 setFormData(({...docSnap.data()}))
-                console.log(formData)
                 setLoading(false)
             }else {
                 navigate('/')
@@ -60,6 +57,7 @@ function EditReview() {
         }
 
         fetchListing()
+    // eslint-disable-next-line
     },[params.reviewId, navigate])
 
     useEffect(() => {
@@ -154,7 +152,6 @@ function EditReview() {
             setLoading(false)
             toast.success("Review successfully updated!")
             navigate('/')
-
        }catch(error){
             setLoading(false)
             console.log(error)
