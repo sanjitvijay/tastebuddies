@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import {useLocation} from "react-router-dom"
 import { collection, query, getDocs, orderBy } from "firebase/firestore"
 import { db } from "../firebase.config"
 import {toast} from "react-toastify"
@@ -14,6 +15,8 @@ function Home() {
     const [place, setPlace] = useState('')
     const [item, setItem]= useState('')
 
+    const location = useLocation()
+
     const algoliasearch = require('algoliasearch')
 
     // Connect and authenticate with your Algolia app
@@ -26,6 +29,7 @@ function Home() {
 
     useEffect(()=>{
         const fetchReviews = async () => {
+            const path = location.pathname
             const response = await index.search(item)
             const reviews = []
             response.hits.forEach((hit)=>{
@@ -41,7 +45,7 @@ function Home() {
 
         fetchReviews()
         setLoading(false)
-    },[item, place])
+    },[item, location.pathname])
 
 
     // useEffect(()=> {
@@ -96,7 +100,7 @@ function Home() {
                 <div className="join join-horizontal w-screen">
                     <input 
                         className="input input-bordered bg-white join-item focus:outline-none w-3/4"
-                        placeholder="Search for a Restaurant and Item"
+                        placeholder="Search for Restaurant/Item"
                         id='item'
                         value={item}
                         onChange={onChange}
