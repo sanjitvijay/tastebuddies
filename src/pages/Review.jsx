@@ -104,11 +104,13 @@ function Review() {
         if(placeName.length === 0){
             setLoading(false)
             toast.error("Enter a restaurant/dining hall name")
+            return
         }
 
         if((price === null || isNaN(price))&& placeType === 'restaurant'){
             setLoading(false)
             toast.error("Enter a valid price")
+            return 
         }
 
 
