@@ -93,9 +93,9 @@ function Home() {
     return (
         <>
         <div className="flex justify-center items-center mb-4">
-                <div className="join join-horizontal">
+                <div className="join join-horizontal w-screen">
                     <input 
-                        className="input input-bordered bg-white join-item focus:outline-none w-96"
+                        className="input input-bordered bg-white join-item focus:outline-none w-3/4"
                         placeholder="Search for a Restaurant and Item"
                         id='item'
                         value={item}
@@ -103,7 +103,7 @@ function Home() {
 
                     />
                     <button 
-                        className="btn btn-primary join-item text-white"
+                        className="btn btn-primary join-item text-white w-1/4"
                         onClick={onClear}
                     >
                         Clear
