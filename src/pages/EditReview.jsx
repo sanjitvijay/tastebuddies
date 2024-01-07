@@ -17,7 +17,6 @@ function EditReview() {
         placeName: '',
         placeType: 'restaurant',
         price: null, 
-        image: null
     })
     const [loading, setLoading] = useState(false)
     const [review, setReview]= useState(false)
@@ -29,7 +28,6 @@ function EditReview() {
         placeName,
         placeType,
         price,
-        image
     } = formData
 
     const auth = getAuth()
@@ -39,7 +37,7 @@ function EditReview() {
 
     useEffect(() => {
         if (review && review.userRef !== auth.currentUser.uid) {
-          toast.error('You can not edit that listing')
+          toast.error('You can not edit this listing')
           navigate('/')
         }
     })
@@ -52,7 +50,7 @@ function EditReview() {
             
             if(docSnap.exists()){
                 setReview(docSnap.data())
-                setFormData((prevState) => ({...prevState, ...docSnap.data()}))
+                setFormData(({...docSnap.data()}))
                 console.log(formData)
                 setLoading(false)
             }else {
@@ -67,12 +65,12 @@ function EditReview() {
     useEffect(() => {
         if (isMounted) {
             onAuthStateChanged(auth, (user) => {
-            if (user) {
-                setFormData({ ...formData, userRef: user.uid })
-            } else {
-                navigate('/sign-in')
-            }
-            })
+        if (user) {
+            setFormData({ ...formData, userRef: user.uid })
+        } else {
+            navigate('/sign-in')
+        }
+        })
     }
 
     return () => {
@@ -140,71 +138,14 @@ function EditReview() {
             toast.error("Enter a valid price")
         }
 
-
-
-        const storeImage = async(image)=>{
-            return new Promise((resolve, reject) => {
-                const storage = getStorage()
-                const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`
-
-                const storageRef = ref(storage, 'images/' + fileName)
-
-                const uploadTask = uploadBytesResumable(storageRef, image)
-                
-                uploadTask.on(
-                    'state_changed',
-                    (snapshot) => {
-                      const progress =
-                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                      console.log('Upload is ' + progress + '% done')
-                      switch (snapshot.state) {
-                        case 'paused':
-                          console.log('Upload is paused')
-                          break
-                        case 'running':
-                          console.log('Upload is running')
-                          break
-                        default:
-                          break
-                      }
-                    },
-                    (error) => {
-                      reject(error)
-                    },
-                    () => {
-                      // Handle successful uploads on complete
-                      // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-                      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                        resolve(downloadURL)
-                      })
-                    }
-                  )
-            })
-        }
-
-        const hasImage = image === null ? false : true
         const hasPrice = placeType === 'restaurant' ? true : false 
 
-        let imageUrl = review.hasImage && review.imageUrl
-
-        if(hasImage){
-            imageUrl = await storeImage(image).catch(()=>{
-                setLoading(false)
-                toast.error("Unable to upload image")
-                return
-            })
-        }
-
         const formDataCopy = {
-            ...formData,
-            hasImage, 
+            ...formData, 
             hasPrice,
-            imageUrl,
             timestamp: serverTimestamp()
         }
 
-        delete formDataCopy.image
-        hasImage === false && delete formDataCopy.imageUrl
         hasPrice === false && delete formDataCopy.price
 
        try{
@@ -337,22 +278,7 @@ function EditReview() {
                     </div>
                     </>
                 )}
-
-
-                <div className="flex justify-start prose mt-1 ml-1">
-                        
-                    <h3>Image</h3>
-                    <p className="mt-0.5 ml-1">(optional)</p>
-                </div>
-
-                <input 
-                    type="file" 
-                    className="file-input file-input-secondary w-full bg-white" 
-                    id='images'
-                    onChange={onMutate}
-                    accept='.jpg,.png,.jpeg'
-                />
-                
+          
                 <div 
                     className="flex justify-center mt-5 px-5"
                     onClick={onSubmit}>

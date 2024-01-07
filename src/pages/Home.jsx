@@ -14,33 +14,63 @@ function Home() {
     const [place, setPlace] = useState('')
     const [item, setItem]= useState('')
 
+    const algoliasearch = require('algoliasearch')
 
+    // Connect and authenticate with your Algolia app
+    const client = algoliasearch('E8NMS63GYJ', 'cb799472817a936c01d8d0c5cb86539c')
 
-    useEffect(()=> {
+    // Create a new index and add a record
+    const index = client.initIndex('reviews')
+
+    
+
+    useEffect(()=>{
         const fetchReviews = async () => {
-            try{
-                const reviewsRef = collection(db, "reviews")
-                const q = query(reviewsRef, orderBy("timestamp", "desc"))
-                const querySnap = await getDocs(q)
-
-                const reviews = []
-
-                querySnap.forEach((doc)=>{
-                    return reviews.push({
-                        id: doc.id, 
-                        data: doc.data()
-                    })
+            const response = await index.search(item)
+            const reviews = []
+            response.hits.forEach((hit)=>{
+                console.log(hit)
+                return reviews.push({
+                    data: hit,
+                    id: hit.objectID
                 })
+            })
 
-                setReviews(reviews)
-                setLoading(false)
-            }catch(error){
-                toast.error("Could not fetch reviews")
-            }
+            setReviews(reviews)
         }
 
         fetchReviews()
-    }, [])
+        setLoading(false)
+    },[item, place])
+
+
+    // useEffect(()=> {
+    //     const fetchReviews = async () => {
+    //         try{
+    //             const reviewsRef = collection(db, "reviews")
+    //             const q = query(reviewsRef, orderBy("timestamp", "desc"))
+    //             const querySnap = await getDocs(q)
+
+    //             console.log(querySnap)
+
+    //             const reviews = []
+
+    //             querySnap.forEach((doc)=>{
+    //                 return reviews.push({
+    //                     id: doc.id, 
+    //                     data: doc.data()
+    //                 })
+    //             })
+
+    //             setReviews(reviews)
+    //             setLoading(false)
+    //         }catch(error){
+    //             toast.error("Could not fetch reviews")
+    //         }
+    //     }
+
+    //     fetchReviews()
+    // }, [])
 
     const onChange = e => {
         if(e.target.id === 'place'){
@@ -51,53 +81,33 @@ function Home() {
         }
     }
 
+    const onClear = () => {
+        setPlace('')
+        setItem('')
+    }
+
     if(loading){
         return <Spinner/>
     }
 
     return (
         <>
-        <div className="flex sm:justify-center items-center mb-4">
-               
-
+        <div className="flex justify-center items-center mb-4">
                 <div className="join join-horizontal">
                     <input 
-                        className="input input-bordered bg-white join-item focus:outline-none w-1/2"
-                        placeholder="Place"
-                        id='place'
-                        value={place}
-                        onChange={onChange}
-                    />
-                    <input 
-                        className="input input-bordered bg-white join-item focus:outline-none  w-1/2"
-                        placeholder="Item"
+                        className="input input-bordered bg-white join-item focus:outline-none w-96"
+                        placeholder="Search for a Restaurant and Item"
                         id='item'
                         value={item}
                         onChange={onChange}
 
                     />
-                    <button className="btn btn-primary join-item text-white">
+                    <button 
+                        className="btn btn-primary join-item text-white"
+                        onClick={onClear}
+                    >
                         Clear
                     </button>
-                </div>
-
-                <div className="dropdown dropdown-bottom dropdown-end ml-4">
-                    <div tabIndex={0} role="button" className="btn btn-ghost">
-                        Sort By
-                    </div>
-                    <ul tabindex="0" class="menu menu-sm dropdown-content z-[1] bg-white rounded-box w-32 ">
-                        <li>
-                            <button className="btn btn-sm btn-ghost text-neutral">
-                                Date Posted
-                            </button>
-                        </li>
-
-                        <li>
-                            <button className="btn btn-sm btn-ghost text-neutral">
-                                Rating
-                            </button>
-                        </li>
-                    </ul>
                 </div>
         </div>
     

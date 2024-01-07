@@ -34,12 +34,13 @@ function SignIn() {
 
             if(userCredential.user){
                 navigate('/')
+                toast.success("Logged in!")
             }
         }catch(error){
             toast.error("Invalid Credentials")
         }   
 
-        toast.success("Logged in!")
+
     }
     return (
         <div className="mb-24">

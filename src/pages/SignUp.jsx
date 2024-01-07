@@ -48,10 +48,11 @@ function SignUp() {
 
             await setDoc(doc(db, 'users', user.uid), formDataCopy)
             navigate('/') 
+            toast.success("Account created successfully")
         }catch(error){
             toast.error("Bad User Credentials")
         }
-        toast.success("Account created successfully")
+
     }
     return (
         <div className="mb-24">
