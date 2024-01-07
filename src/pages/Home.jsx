@@ -26,9 +26,11 @@ function Home() {
 
     useEffect(()=>{
         if(item === ''){
+            console.log("hello")
             fetchReviewsWithFirestore()
         }
         else{
+            console.log("hello")
             fetchReviewsWithAlgolia()
         }
         //eslint-disable-next-line
@@ -55,8 +57,6 @@ function Home() {
                 const reviewsRef = collection(db, "reviews")
                 const q = query(reviewsRef, orderBy("timestamp", "desc"))
                 const querySnap = await getDocs(q)
-
-                console.log(querySnap)
 
                 const reviews = []
 
@@ -88,7 +88,7 @@ function Home() {
 
     return (
         <>
-        <div className="flex justify-center items-center mb-4">
+        {/* <div className="flex justify-center items-center mb-4">
                 <div className="join join-horizontal w-screen">
                     <input 
                         className="input input-bordered bg-white join-item focus:outline-none w-3/4"
@@ -105,7 +105,7 @@ function Home() {
                         Clear
                     </button>
                 </div>
-        </div>
+        </div> */}
     
 
 
