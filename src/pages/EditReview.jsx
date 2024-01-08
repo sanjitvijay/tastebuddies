@@ -199,8 +199,8 @@ function EditReview() {
                     value={description}
                     onChange={onMutate}
                     minLength='10'
-                    maxLength='500'
-                    placeholder="Max 500 characters"
+                    maxLength='1000'
+                    placeholder="Max 1000 characters"
                     required
                 />
 
