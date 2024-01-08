@@ -52,27 +52,27 @@ function Home() {
 
 
 
-        const fetchReviewsWithFirestore = async () => {
-            try{
-                const reviewsRef = collection(db, "reviews")
-                const q = query(reviewsRef, orderBy("timestamp", "desc"))
-                const querySnap = await getDocs(q)
+    const fetchReviewsWithFirestore = async () => {
+        try{
+            const reviewsRef = collection(db, "reviews")
+            const q = query(reviewsRef, orderBy("timestamp", "desc"))
+            const querySnap = await getDocs(q)
 
-                const reviews = []
+            const reviews = []
 
-                querySnap.forEach((doc)=>{
-                    return reviews.push({
-                        id: doc.id, 
-                        data: doc.data()
-                    })
+            querySnap.forEach((doc)=>{
+                return reviews.push({
+                    id: doc.id, 
+                    data: doc.data()
                 })
+            })
 
-                setReviews(reviews)
-                setLoading(false)
-            }catch(error){
-                toast.error("Could not fetch reviews")
-            }
+            setReviews(reviews)
+            setLoading(false)
+        }catch(error){
+            toast.error("Could not fetch reviews")
         }
+    }
 
     const onChange =  e => {
         setItem(e.target.value)

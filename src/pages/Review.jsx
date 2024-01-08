@@ -207,7 +207,7 @@ function Review() {
                 onSubmit={onSubmit}
             >
                 <label className="prose label mt-1">
-                    <h3>Name</h3>
+                    <h3>Name of Food</h3>
                 </label>
                 <input 
                     className="input input-secondary bg-white w-full"
