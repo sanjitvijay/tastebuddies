@@ -106,6 +106,10 @@ function Home() {
                     </button>
                 </div>
         </div> */}
+
+        <div className="flex justify-center text-center  mb-4">
+            <strong> Search function currently disabled, working on fix</strong>
+        </div>
     
 
 
